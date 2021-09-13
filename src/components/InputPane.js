@@ -1,51 +1,48 @@
-import React from "react";
+import React, {useState, useContext} from 'react';
+import { DataContext } from '../contexts/DataContext';
 
-class InputPane extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            inputTaskTitle: ''
-        }
-        this.addTask = this.addTask.bind(this);
-    }
+function InputPane() {
 
-    addTask(event) {
-        if(this.state.inputTaskTitle === '') {
-            alert('Enter Task Title')
+    let [inputTitle, setInputTitle] = useState('');
+    let {toDoTasks, setToDoTasks} = useContext(DataContext);
+
+    function handleAddClick() {
+        if(inputTitle === '') {
+            alert('Please provide a title to the task');
         } else {
+            
             const NEW_TASK = {
-                title: this.state.inputTaskTitle,
-                completed: false
-            }
-            this.setState({
-                inputTaskTitle: ''
-            })
-            this.props.onAdd(NEW_TASK);
+                title: inputTitle,
+                index: toDoTasks.length,
+                completed: false,
+                toEdit: false
+            };
+            toDoTasks.push(NEW_TASK);
+            setInputTitle('');
+            setToDoTasks(toDoTasks);
         }
     }
 
-    render() {
-        return (
-            <tr id='input-pane'>
-                <td>New Task</td>
-                <td>
-                    <input
-                        id='input-field'
-                        type="text"
-                        placeholder='Title (Mandatory)'
-                        value={this.state.inputTaskTitle}
-                        onChange={(event) => this.setState({inputTaskTitle: event.target.value})}
-                    />
-                </td>
-                <td>
-                    <button id='add-button' onClick={this.addTask}>
-                        Add
-                    </button>
-                </td>
-                <td />
-            </tr>
-        )
+    function handleCancelClick() {
+        setInputTitle('');
     }
+
+    return (
+        <tr id='input-pane'>
+            <td>New Task</td>
+            <td>
+                <input
+                    id='input-field'
+                    type="text"
+                    placeholder='Title (Mandatory)'
+                    value={inputTitle}
+                    onChange={(event) => setInputTitle(event.target.value)}
+                />
+            </td>
+            <td><button id='add-button' onClick={handleAddClick}>Add</button></td>
+            <td><button id='cancel-button' onClick={handleCancelClick}>Cancel</button></td>
+        </tr>
+    )
 }
 
 export default InputPane;
